@@ -3,30 +3,35 @@ import xlsxwriter
 workbook = xlsxwriter.Workbook('hello.xlsx')
 worksheet = workbook.add_worksheet()
 
-worksheet.write('A1', 'Dial Colors')
-worksheet.write('A2', 60)
-worksheet.write('A3', 60)
-worksheet.write('A4', 60)
-worksheet.write('A5', 60)
-worksheet.write('A6', 60)
-worksheet.write('A7', 60)
-worksheet.write('B1', 'Needle')
-worksheet.write('B2', 180)
-worksheet.write('B3', '=((180/200)*(C3+100))-B4')
-worksheet.write('B4', 4)
-worksheet.write('B5', '=360-SUM(B2:B4)')
-worksheet.write('C1', 'Chart Title')
-worksheet.write('C2', '=$C$3 & "% Share"')
-worksheet.write('C3', 0)
+worksheet.write('A1', 'Chart Title')
+worksheet.write('A2', '=$A$3 & "% Share"')
+worksheet.write('A3', 0)
 
 worksheet2 = workbook.add_worksheet()
+#worksheet2.hide()
+
+worksheet2.write('A1', 'Dial Colors')
+worksheet2.write('A2', 60)
+worksheet2.write('A3', 60)
+worksheet2.write('A4', 60)
+worksheet2.write('A5', 60)
+worksheet2.write('A6', 60)
+worksheet2.write('A7', 60)
+worksheet2.write('B1', 'Needle')
+worksheet2.write('B2', 180)
+worksheet2.write('B3', '=((180/200)*(Sheet1!A3+100))-B4')
+worksheet2.write('B4', 4)
+worksheet2.write('B5', '=360-SUM(B2:B4)')
 
 def create_dial():
     data_axis = []
     data_val = []
     for x in xrange(0, 360):
         data_axis.append(x)
-        data_val.append("=IF(ABS(ABS(ROW()-Sheet1!C3-2-180)-180)<10,8-(0.25*ABS(ABS(ROW()-Sheet1!C3-2-180)-180)),0)")
+        width = 15
+        decrement = 0.4
+        data_val.append("=IF(ABS(ABS(ROW()-Sheet1!A3-2-180)-180)<%s,8-(%s*ABS(ABS(ROW()-Sheet1!A3-2-180)-180)),0)"
+                            % (width, decrement))
 
     worksheet2.write_column('D2', data_axis)
     worksheet2.write_column('E2', data_val)
@@ -47,8 +52,9 @@ def create_dial():
         'none': True,
     })
 
-    worksheet.insert_chart('F11', arrow_radar_chart, {
-        'x_offset': -10, 
+    worksheet.insert_chart('B2', arrow_radar_chart, {
+        #'x_offset': -10, 
+        'x_offset': 0, 
         'y_offset': 0,
     })
 
@@ -58,7 +64,7 @@ nps_chart = workbook.add_chart({
 })
 
 nps_chart.add_series({
-    'values': '=Sheet1!$A2:$A$7',
+    'values': '=Sheet2!$A2:$A$7',
     'points': [
         {'fill': {'color': '#FC7613'}},
         {'fill': {'color': '#FFD641'}},
@@ -69,8 +75,8 @@ nps_chart.add_series({
     ],
 })
 
-worksheet.insert_chart('F11', nps_chart, {
-    'x_offset': 0, 
+worksheet.insert_chart('B2', nps_chart, {
+    'x_offset': 10, 
     'y_offset': 0,
 })
 
