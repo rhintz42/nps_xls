@@ -17,11 +17,11 @@ worksheet2.write('A4', 60)
 worksheet2.write('A5', 60)
 worksheet2.write('A6', 60)
 worksheet2.write('A7', 60)
-worksheet2.write('B1', 'Needle')
-worksheet2.write('B2', 180)
-worksheet2.write('B3', '=((180/200)*(Sheet1!A3+100))-B4')
-worksheet2.write('B4', 4)
-worksheet2.write('B5', '=360-SUM(B2:B4)')
+#worksheet2.write('B1', 'Needle')
+#worksheet2.write('B2', 180)
+#worksheet2.write('B3', '=((180/200)*(Sheet1!A3+100))-B4')
+#worksheet2.write('B4', 4)
+#worksheet2.write('B5', '=360-SUM(B2:B4)')
 
 def create_dial():
     data_axis = []
