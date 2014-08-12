@@ -17,7 +17,57 @@ worksheet.write('B4', 4)
 worksheet.write('B5', '=360-SUM(B2:B4)')
 worksheet.write('C1', 'Chart Title')
 worksheet.write('C2', '=$C$3 & "% Share"')
-worksheet.write('C3', 100)
+worksheet.write('C3', 45)
+
+def set_dial_position(data_val, degrees):
+    data_val[degrees-6] = 5.5
+    data_val[degrees-5] = 5.75
+    data_val[degrees-4] = 6
+    data_val[degrees-3] = 6.25
+    data_val[degrees-2] = 6.5
+    data_val[degrees-1] = 6.75
+    data_val[degrees] = 7
+    data_val[degrees+1] = 6.75
+    data_val[degrees+2] = 6.5
+    data_val[degrees+3] = 6.25
+    data_val[degrees+4] = 6
+    data_val[degrees+5] = 5.75
+    data_val[degrees+6] = 5.5
+
+def create_dial():
+    data_axis = []
+    data_val = []
+    for x in xrange(0, 360):
+        data_axis.append(x)
+        data_val.append("=IF(ABS(ABS(ROW()-C3-2-180)-180)<10,8-(0.25*ABS(ABS(ROW()-C3-2-180)-180)),0)")
+
+    #set_dial_position(data_val, -78)
+
+    worksheet.write_column('D2', data_axis)
+    worksheet.write_column('E2', data_val)
+
+
+    arrow_radar_chart = workbook.add_chart({
+        'type': 'radar',
+        'subtype': 'filled',
+    })
+
+    arrow_radar_chart.add_series({
+        'categories': '=Sheet1!$D$2:$D$361',
+        'values':     '=Sheet1!$E$2:$E$361',
+        'fill': {'color': '#FFFFFF'},
+        'data_labels': {
+            'leader_lines': False,
+            'value': False, 
+            'category': False,
+            'series_name': False,
+        },
+    })
+
+    worksheet.insert_chart('C9', arrow_radar_chart, {
+        'x_offset': 31, 
+        'y_offset': 10,
+    })
 
 nps_chart = workbook.add_chart({
     'type': 'doughnut',
@@ -25,38 +75,24 @@ nps_chart = workbook.add_chart({
 })
 
 nps_chart.add_series({
-        'values': '=Sheet1!$A2:$A$7',
-        'points': [
-            {'fill': {'color': '#FC7613'}},
-            {'fill': {'color': '#FFD641'}},
-            {'fill': {'color': '#B6C94C'}},
-            {'fill': {'none': True}},
-            {'fill': {'none': True}},
-            {'fill': {'none': True}},
-        ],
-    })
-
-worksheet.insert_chart('C6', nps_chart)
-
-
-needle_chart = workbook.add_chart({
-    'type': 'pie',
-    'orientation': 90,
+    'values': '=Sheet1!$A2:$A$7',
+    'points': [
+        {'fill': {'color': '#FC7613'}},
+        {'fill': {'color': '#FFD641'}},
+        {'fill': {'color': '#B6C94C'}},
+        {'fill': {'none': True}},
+        {'fill': {'none': True}},
+        {'fill': {'none': True}},
+    ],
 })
 
-needle_chart.add_series({
-        'values': '=Sheet1!$B2:$B$5',
-        'points': [
-            {'fill': {'none': True}},
-            {'fill': {'none': True}},
-            #{'fill': {'color': 'green'}},
-            {'fill': {'color': 'blue'}},
-            #{'fill': {'color': 'brown'}},
-            #{'fill': {'color': 'orange'}},
-            {'fill': {'none': True}},
-        ],
-    })
+#nps_chart.set_size({'x_scale': .9, 'y_scale': .9})
 
-worksheet.insert_chart('C6', needle_chart)
+worksheet.insert_chart('C9', nps_chart, {
+    'x_offset': 0, 
+    'y_offset': 0,
+})
+
+create_dial()
 
 workbook.close()
