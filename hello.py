@@ -17,34 +17,19 @@ worksheet.write('B4', 4)
 worksheet.write('B5', '=360-SUM(B2:B4)')
 worksheet.write('C1', 'Chart Title')
 worksheet.write('C2', '=$C$3 & "% Share"')
-worksheet.write('C3', 45)
+worksheet.write('C3', 0)
 
-def set_dial_position(data_val, degrees):
-    data_val[degrees-6] = 5.5
-    data_val[degrees-5] = 5.75
-    data_val[degrees-4] = 6
-    data_val[degrees-3] = 6.25
-    data_val[degrees-2] = 6.5
-    data_val[degrees-1] = 6.75
-    data_val[degrees] = 7
-    data_val[degrees+1] = 6.75
-    data_val[degrees+2] = 6.5
-    data_val[degrees+3] = 6.25
-    data_val[degrees+4] = 6
-    data_val[degrees+5] = 5.75
-    data_val[degrees+6] = 5.5
+worksheet2 = workbook.add_worksheet()
 
 def create_dial():
     data_axis = []
     data_val = []
     for x in xrange(0, 360):
         data_axis.append(x)
-        data_val.append("=IF(ABS(ABS(ROW()-C3-2-180)-180)<10,8-(0.25*ABS(ABS(ROW()-C3-2-180)-180)),0)")
+        data_val.append("=IF(ABS(ABS(ROW()-Sheet1!C3-2-180)-180)<10,8-(0.25*ABS(ABS(ROW()-Sheet1!C3-2-180)-180)),0)")
 
-    #set_dial_position(data_val, -78)
-
-    worksheet.write_column('D2', data_axis)
-    worksheet.write_column('E2', data_val)
+    worksheet2.write_column('D2', data_axis)
+    worksheet2.write_column('E2', data_val)
 
 
     arrow_radar_chart = workbook.add_chart({
@@ -53,20 +38,18 @@ def create_dial():
     })
 
     arrow_radar_chart.add_series({
-        'categories': '=Sheet1!$D$2:$D$361',
-        'values':     '=Sheet1!$E$2:$E$361',
+        'categories': '=Sheet2!$D$2:$D$361',
+        'values':     '=Sheet2!$E$2:$E$361',
         'fill': {'color': '#FFFFFF'},
-        'data_labels': {
-            'leader_lines': False,
-            'value': False, 
-            'category': False,
-            'series_name': False,
-        },
     })
 
-    worksheet.insert_chart('C9', arrow_radar_chart, {
-        'x_offset': 31, 
-        'y_offset': 10,
+    arrow_radar_chart.set_legend({
+        'none': True,
+    })
+
+    worksheet.insert_chart('F11', arrow_radar_chart, {
+        'x_offset': -10, 
+        'y_offset': 0,
     })
 
 nps_chart = workbook.add_chart({
@@ -86,9 +69,7 @@ nps_chart.add_series({
     ],
 })
 
-#nps_chart.set_size({'x_scale': .9, 'y_scale': .9})
-
-worksheet.insert_chart('C9', nps_chart, {
+worksheet.insert_chart('F11', nps_chart, {
     'x_offset': 0, 
     'y_offset': 0,
 })
